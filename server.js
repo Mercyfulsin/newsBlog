@@ -1,59 +1,52 @@
+require("dotenv").config();
 const express = require("express");
+const exphbs = require("express-handlebars");
 const logger = require("morgan");
 const mongoose = require("mongoose");
 const axios = require("axios");
 const cheerio = require("cheerio");
 const db = require("./models");
-const PORT = 3000;
+const PORT = 8888;
 const app = express();
 app.use(logger("dev"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
-mongoose.connect(process.env.MONGODB_URI || process.env.MONGODB_URI, { useNewUrlParser: true });
+app.engine("handlebars", exphbs({ defaultLayout: "main" }));
+app.set("view engine", "handlebars");
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
 
 // Routes
+app.get("/", (req,res) => {
+    db.Article.find({})
+    .then(function (dbArticle) {
+        // If we were able to successfully find Articles, send them back to the client
+        console.log(JSON.stringify(dbArticle));
+        res.render("index", {article: dbArticle});
+    })
+    .catch(function (err) {
+        // If an error occurred, send it to the client
+        console.log(err);
+        res.json(err);
+    });
+});
 
-// A GET route for scraping the echoJS website
-app.get("/scrape", function (req, res) {
-    // First, we grab the body of the html with axios
-    axios.get("https://www.crunchyroll.com/news").then(function (response) {
-        // Then, we load that into cheerio and save it to $ for a shorthand selector
+app.get("/scrape", (req, res) => {
+    axios.get("https://www.crunchyroll.com/news").then((response) => {
         const $ = cheerio.load(response.data);
         $("ul li.news-item").each((i, item) => {
-            let title = $(item).children("h2").text().trim();
-            let subTitle = $(item).children("h3").text().trim();
-            let author = $(item).children("div.news-header2").children("div.byline-and-post-date").children("span").text().trim();
-            let date = $(item).children("div.news-header2").children("div.byline-and-post-date").children("div").text().trim();
-            
+            let result = {};
+            result.title = $(item).children("h2").text().trim();
+            result.subTitle = $(item).children("h3").text().trim();
+            result.author = $(item).children("div.news-header2").children("div.byline-and-post-date").children("span").text().trim();
+            result.date = $(item).children("div.news-header2").children("div.byline-and-post-date").children("div").text().trim();
+            result.image = $(item).children("div.clearfix").children("img").attr("src");
+            result.content = $(item).children("div.clearfix").children("div.short").children("p").text();
+            db.Article.create(result, (err, reply) => {
+                if (err) throw err;
+                console.log(reply);
+            });
         });
-        // Now, we grab every h2 within an article tag, and do the following:
-        // $("ul.news").each(function(i, element) {
-        //     console.log(i, element);
-        //   // Save an empty result object
-        //   var result = {};
-
-        //   // Add the text and href of every link, and save them as properties of the result object
-        //   result.title = $(this)
-        //     .children("a")
-        //     .text();
-        //   result.link = $(this)
-        //     .children("a")
-        //     .attr("href");
-
-        //   // Create a new Article using the `result` object built from scraping
-        //   db.Article.create(result)
-        //     .then(function(dbArticle) {
-        //       // View the added result in the console
-        //       console.log(dbArticle);
-        //     })
-        //     .catch(function(err) {
-        //       // If an error occurred, log it
-        //       console.log(err);
-        //     });
-        // });
-
-        // Send a message to the client
         res.send("Scrape Complete");
     });
 });
@@ -110,5 +103,5 @@ app.post("/articles/:id", function (req, res) {
 
 // Start the server
 app.listen(PORT, function () {
-    console.log("App running on port " + PORT + "!");
+    console.log("App running on port http://localhost:" + PORT + "!");
 });
