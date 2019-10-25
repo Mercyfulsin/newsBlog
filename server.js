@@ -17,12 +17,12 @@ app.set("view engine", "handlebars");
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
 
 // Routes
-app.get("/", (req,res) => {
+app.get("/", (req, res) => {
     db.Article.find({})
     .then(function (dbArticle) {
         // If we were able to successfully find Articles, send them back to the client
         console.log(JSON.stringify(dbArticle));
-        res.render("index", {article: dbArticle});
+        res.render("index", { article: dbArticle });
     })
     .catch(function (err) {
         // If an error occurred, send it to the client
@@ -63,6 +63,13 @@ app.get("/articles", function (req, res) {
             // If an error occurred, send it to the client
             res.json(err);
         });
+});
+
+app.post("/articles", (req, res) => {
+    let id = req.body.id;
+    db.Article.deleteOne({ _id: id }).then(reply => {
+        res.json(reply);
+    });
 });
 
 // Route for grabbing a specific Article by id, populate it with it's note
