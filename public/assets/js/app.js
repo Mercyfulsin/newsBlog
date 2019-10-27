@@ -37,7 +37,7 @@ $(document).ready(() => {
                     $.ajax({
                         method: "POST",
                         url: `/articles/${id}`,
-                        data: { body: $(".comment").val() },
+                        data: { body: $(this).parent().parent().children("textarea").val() },
                     }).then(function (dbArticle) {
                         console.log(dbArticle);
                     }).catch(function (err) {
