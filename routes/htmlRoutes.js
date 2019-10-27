@@ -16,4 +16,7 @@ module.exports = app => {
                 res.json(err);
             });
     });
+    app.get("/scrapeNews", (req,res) => {
+        res.render("scrape");
+    });
 }

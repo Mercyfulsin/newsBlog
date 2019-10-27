@@ -1,0 +1,12 @@
+<h1>Scrape Complete! Redirecting...</h1>
+<script>
+  $.ajax({
+    url: "/scrape",
+    method: "GET"
+    }).catch(function(reply){
+      console.log(reply);
+    }).catch(function(err){
+      console.log("Error: ", err);
+    });
+  setTimeout(()=>{window.location.replace("/")}, 2000);
+</script>
