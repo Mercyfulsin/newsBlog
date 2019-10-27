@@ -1,18 +1,40 @@
-<h1>Latest Anime News!</h1>
-
-<p>Where Otaku's do stuff?..</p>
-<ul>
-  {{#each article}}
-  	<li>
-      <p></p>
-  		<p><span data-id={{this._id}} class="label"><h1>{{this.title}}</h1></span></p>
-      <p><span class="label"><h2>{{this.subTitle}}</h2></span></p>
-      <p><span class="label">{{this.content}}</span></p>
-      <p><span class="label">{{this.author}}</span></p>
-      <button data-id="{{this._id}}" class="delquote">Delete</button>
-      <a href="/{{this._id}}">Update this quote</a>
-  	</li>
-  {{/each}} 
-</ul>
-
+<div class="row">
+  <div class="col-sm-12">
+    <h1>Latest Anime News!</h1>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    <p>Where Otaku's do stuff?..</p>
+    <button id="scrape" href="/scrape">Click to grab latest news!</button>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    {{#each article}}
+    {{!-- <p><span data-id={{this._id}} class="label">
+        <h1>{{this.title}}</h1>
+      </span></p>
+    <p><span class="label">
+        <h2>{{this.subTitle}}</h2>
+      </span></p>
+    <p><span class="label">{{this.content}}</span></p>
+    <p><span class="label">{{this.author}}</span></p>
+    <button data-id="{{this._id}}" class="delquote">Delete</button>
+    <a href="/{{this._id}}">Update this quote</a> --}}
+    {{!-- New Attempt --}}
+    <div class="card card-flow" style="width: 30rem;">
+      <img src={{this.image}} class="card-img-top" alt="Article Image">
+      <div class="card-body">
+        <h2 class="card-title">{{this.title}}</h2>
+        <h5 class="card-title">{{this.subTitle}} </h5>
+        <p class="card-text">{{this.content}}</p>
+        <a href="https://www.crunchyroll.com/{{this.link}}" target="_blank" class="btn btn-primary">Read Full Article!</a>
+        <a href="#" data-id="{{this._id}}" class="btn btn-danger delarticle">Remove Article</a>
+        <a href="#" data-id="{{this._id}}" class="btn btn-warning addcomment">Add Comment</a>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+</div>
 <script src="/assets/js/app.js"></script>
