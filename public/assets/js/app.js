@@ -8,7 +8,7 @@ $(document).ready(() => {
                 console.log(data, status);
                 switch (status) {
                     case 'success':
-                        $(this).parent().parent().remove();
+                        $(this).parent().parent().parent().remove();
                         break;
                     default:
                         console.log("Please refresh");
